@@ -112,16 +112,16 @@ def solve():
     print N
         
     T = set()
-    unchecked = stockholm - set(A)
+    unchecked = list(stockholm - set(A))
     while unchecked:
         current = unchecked.pop()
         T.add(current)
         if current in M:
-            unchecked.add(M[current])
+            unchecked.append(M[current])
         elif current in N:
             for l in N[current]:
                 if l not in T:
-                    unchecked.add(l)
+                    unchecked.append(l)
     print T
     cover = ( stockholm - T ) | ( london & T )
     print len(cover)
