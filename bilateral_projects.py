@@ -1,6 +1,8 @@
 #!/usr/bin/python
 # Solution to http://www.spotify.com/us/jobs/tech/bilateral-projects/
 
+import sys
+
 ## {{{ http://code.activestate.com/recipes/123641/ (r1)
 # Hopcroft-Karp bipartite max-cardinality matching and max independent set
 # David Eppstein, UC Irvine, 27 Apr 2002
@@ -79,7 +81,53 @@ def bipartiteMatch(graph):
 ## end of http://code.activestate.com/recipes/123641/ }}}
 
 def solve():
-    pass
+    G = {}
+    london = set()
+    stockholm = set()
+    m = int(sys.stdin.readline())
+    for i in range(m):
+        line = sys.stdin.readline()
+        S,L = line.split()
+        S,L = int(S),int(L)
+        stockholm.add(S)
+        london.add(L)
+        if S in G:
+            G[S].append(L)
+        else:
+            G[S] = [L]
+
+    # http://en.wikipedia.org/wiki/K%C3%B6nig%27s_theorem_(graph_theory)
+    M,A,B = bipartiteMatch(G)
+    print M
+    N = {}
+    for s in G:
+        for l in G[s]:
+            if l in M and M[l] == s:
+                continue
+            if s in N:
+                N[s].append(l)
+            else:
+                N[s] = [l]
+
+    print N
+        
+    T = set()
+    unchecked = stockholm - set(A)
+    while unchecked:
+        current = unchecked.pop()
+        T.add(current)
+        if current in M:
+            unchecked.add(M[current])
+        elif current in N:
+            for l in N[current]:
+                if l not in T:
+                    unchecked.add(l)
+    print T
+    cover = ( stockholm - T ) | ( london & T )
+    print len(cover)
+    for k in cover:
+        print k
+    
 
 if __name__ == "__main__":
     solve()
