@@ -98,31 +98,30 @@ def solve():
 
     # http://en.wikipedia.org/wiki/K%C3%B6nig%27s_theorem_(graph_theory)
     M,A,B = bipartiteMatch(G)
-    print M
-    N = {}
+
+    matching_complement = {}
     for s in G:
         for l in G[s]:
             if l in M and M[l] == s:
                 continue
-            if s in N:
-                N[s].append(l)
+            if s in matching_complement:
+                matching_complement[s].append(l)
             else:
-                N[s] = [l]
+                matching_complement[s] = [l]
 
-    print N
         
     T = set()
-    unchecked = list(stockholm - set(A))
+    unchecked = A
     while unchecked:
         current = unchecked.pop()
         T.add(current)
         if current in M:
             unchecked.append(M[current])
-        elif current in N:
-            for l in N[current]:
+        elif current in matching_complement:
+            for l in matching_complement[current]:
                 if l not in T:
                     unchecked.append(l)
-    print T
+
     cover = ( stockholm - T ) | ( london & T )
     print len(cover)
     for k in cover:
